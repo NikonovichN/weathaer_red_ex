@@ -105,6 +105,16 @@ class __SuccessStateState extends State<_SuccessState> {
   }
 }
 
+enum WeatherIconData {
+  sun(Icons.sunny),
+  snow(Icons.ac_unit),
+  rain(Icons.water_drop_outlined),
+  unknown(Icons.radio_button_unchecked_sharp);
+
+  const WeatherIconData(this.icon);
+  final IconData icon;
+}
+
 class _WeatherDisplay extends StatelessWidget {
   final CityWeatherEntity data;
 
@@ -116,6 +126,7 @@ class _WeatherDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     final firstDay = data.details[0];
     final formatter = DateFormat('EEEE, MMM d, y');
+
     return SizedBox(
       height: 400,
       child: Padding(
@@ -136,7 +147,12 @@ class _WeatherDisplay extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.sunny,
+                  WeatherIconData.values
+                      .firstWhere(
+                        (e) => e.name == firstDay.condition,
+                        orElse: () => WeatherIconData.unknown,
+                      )
+                      .icon,
                   color: Colors.white,
                   size: 80.0,
                 ),
@@ -159,10 +175,7 @@ class _WeatherDisplay extends StatelessWidget {
             const SizedBox(height: 120.0),
             Text(
               _sevenDayForecast,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w300,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
             ),
             const SizedBox(height: 20.0),
             SizedBox(
@@ -227,10 +240,15 @@ class _DayView extends StatelessWidget {
             children: [
               Text(
                 '${data.temp.toString()} °C',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w300),
+                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.w600),
               ),
               Icon(
-                Icons.sunny,
+                WeatherIconData.values
+                    .firstWhere(
+                      (e) => e.name == data.condition,
+                      orElse: () => WeatherIconData.unknown,
+                    )
+                    .icon,
                 color: Colors.white,
                 size: 40.0,
               ),
